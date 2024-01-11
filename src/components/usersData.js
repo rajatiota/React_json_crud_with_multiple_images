@@ -71,6 +71,7 @@ const UsersData = () => {
     </div>
   );
 
+  // function for delete the user
   function handleDelete(id) {
     const confirm = window.confirm("Are you sure you want to delete?");
     if (confirm) {

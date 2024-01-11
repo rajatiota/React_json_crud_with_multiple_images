@@ -4,22 +4,22 @@ import  axios from 'axios';
 
 const Read = () => {
 
+   // useparam is used to get the id from the url parameter
     const {id} = useParams();
+
+    // initialize inputState with defalut structure to show data from json server
     const [Data, setData] = useState({
       name: "",
       email: "",
       images: [],
     });
-    // var imageArr = [];
 
+    // useeffect is used to get the data from the json server
     useEffect(() => {
         axios.get('http://localhost:3005/users/'+id)
         .then(res => setData(res.data))
         .catch(err => console.log(err))
-      }, [id]);
-
-    // imageArr =[Data.images];
-    // console.log('imageArr',imageArr); 
+      }, [id]); 
 
   return (
     <div className='d-flex w-100 vh-100 justify-content-center align-items-center'>

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Create = () => {
+
+  // initialize inputState with defalut structure to store in json server
   const [inputData, setInputData] = useState({
     name: "",
     email: "",
@@ -18,27 +20,31 @@ const Create = () => {
   const [maxSize] = useState(25); // Maximum size in megabytes
   const [maxCount] = useState(5); // Maximum allowed count
 
+  // fuction used to convert images into base 64 string format
   const image_to_base = (arr) => {
     for (let i = 0; i < arr.length; i++) {
       const reader = new FileReader();
       reader.readAsDataURL(arr[i]);
       reader.onload = () => {
-        // console.log(reader.result);
+        // add base64 strings into imgs array
         imgs.push(reader.result);
       };
     }
 
+    // set the base64 strings into inputdata images to upload on server
     setInputData(() => ({
       ...inputData,
       images: imgs,
     }));
   };
 
+  // handle images change is used to handle the input images
   const handleImageChange = (e) => {
     const files = e.target.files;
     count = files.length;
     console.log(count);
 
+    // add the images into array 
     for (let i = 0; i < count; i++) {
       selectedFiles.push(files[i]);
     }
@@ -65,9 +71,11 @@ const Create = () => {
 
     // Update state with selected images
     setSelectedImages((prev) => [...prev, ...selectedFiles]);
+    // call the function to convert the selected images to a string
     image_to_base(selectedFiles);
   };
 
+  // function to delete the images from the preview and also update the array
   const handleImageDelete = (index) => {
     // Create a copy of the array and remove the selected image
     const updatedImages = [...selectedImages];
@@ -75,20 +83,22 @@ const Create = () => {
     // Update state with the modified array
     setSelectedImages(updatedImages);
 
+    // call the function to convert the updated images to a string for upload 
     image_to_base(updatedImages);
     return false;
   };
 
+  // function to handle the submit event
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    
     // Check if name and email fields are not empty
     if (!inputData.name.trim() || !inputData.email.trim()) {
       alert("Name and Email are required fields.");
       return;
     }
     
+     // Check if email is valid
     const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
     if(!inputData.email.match(isValidEmail)){
@@ -102,6 +112,7 @@ const Create = () => {
       return;
     }
 
+    // to send the data to the server
     try {
       const response = await axios.post(
         "http://localhost:3005/users",
@@ -110,6 +121,7 @@ const Create = () => {
 
       console.log(response.data);
       alert("Data Posted Successfully!");
+      // navigate to home page
       navigate("/");
     } catch (error) {
       console.log("Error posting data:", error);
