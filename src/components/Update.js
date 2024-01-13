@@ -22,7 +22,7 @@ const Update = () => {
     
     const navigate = useNavigate();
     const [selectedImages, setSelectedImages] = useState([]);
-    const [maxSize] = useState(25); // Maximum size in megabytes
+    const [maxSize] = useState(2); // Maximum size in megabytes
     const [maxCount] = useState(5); // Maximum allowed count
   
      // fuction used to convert images into base 64 string format
@@ -88,38 +88,44 @@ const Update = () => {
       count = files.length;
       console.log(count);
   
-      // add the images into array 
-      for (let i = 0; i < count; i++) {
+       // add the images into array 
+       for (let i = 0; i < count; i++) {
         selectedFiles.push(files[i]);
       }
       console.log("selected files:", selectedFiles);
-      // call the function to convert the selected images to a string
-     await image_to_base(selectedFiles);
+
+     // add the images in array which get from the server
+     const arrr = [...inputData.images];
   
       // Check if the combined size exceeds the maximum size
       const totalSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
       const maxSizeBytes = maxSize * 1024 * 1024; // Convert maxSize to bytes
+     
   
       if (totalSize > maxSizeBytes) {
         alert(`Total size exceeds the maximum allowed size of ${maxSize} MB.`);
         // Clear the input value to prevent filenames from showing after an error
         e.target.value = "";
+        selectedFiles = [];
         return;
       }
   
       // Check if the selected count exceeds the maximum allowed count
-      if (selectedFiles.length + selectedImages.length > maxCount) {
+      if (files.length + arrr.length > maxCount) {
         alert(`You can select a maximum of ${maxCount} images.`);
         // Clear the input value to prevent filenames from showing after an error
         e.target.value = "";
+        selectedFiles = [];
         return;
       }
+
+      // call the function to convert the selected images to a string
+     await image_to_base(selectedFiles);
   
       // call the delay function
       await timeout(1000);
 
       // concat the array of images get from the server and from input
-      const arrr = [...inputData.images];
       console.log('arrr', arrr);
       console.log('imgs', imgs);
       var finalArray = imgs.concat(arrr);

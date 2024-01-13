@@ -58,6 +58,7 @@ const Create = () => {
       alert(`Total size exceeds the maximum allowed size of ${maxSize} MB.`);
       // Clear the input value to prevent filenames from showing after an error
       e.target.value = "";
+      selectedFiles = [];
       return;
     }
 
@@ -66,13 +67,17 @@ const Create = () => {
       alert(`You can select a maximum of ${maxCount} images.`);
       // Clear the input value to prevent filenames from showing after an error
       e.target.value = "";
+         selectedFiles = [];
       return;
     }
 
     // Update state with selected images
     setSelectedImages((prev) => [...prev, ...selectedFiles]);
+
+    var finalArray = selectedFiles.concat(selectedImages);
+
     // call the function to convert the selected images to a string
-    image_to_base(selectedFiles);
+    image_to_base(finalArray);
   };
 
   // function to delete the images from the preview and also update the array
