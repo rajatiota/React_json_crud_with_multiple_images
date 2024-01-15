@@ -17,7 +17,9 @@ const Read = () => {
       images: [],
     });
 
+    // initialize state for index
     const [lightboxIndex, setLightboxIndex] = useState(0);
+    // initialize state for open and clode lightbox
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     var url =[];
     // useeffect is used to get the data from the json server
@@ -29,12 +31,14 @@ const Read = () => {
 
       url = Data.images;
 
+      // function for open lightbox
     const openLightbox = (index) => {
       console.log('Opening lightbox for index:', index);
       setLightboxIndex(index);
       setIsLightboxOpen(true);
   };
 
+      // function for close lightbox
   const closeLightbox = () => {
     console.log('Closing lightbox');
       setIsLightboxOpen(false);
@@ -68,12 +72,12 @@ const Read = () => {
           </div>
           {isLightboxOpen && (
             <Lightbox
-            image={url[lightboxIndex]}
+            images={url}
+            startIndex={lightboxIndex}
             onClose={closeLightbox}
             isOpen={isLightboxOpen}
         />
-          )}
-            
+          )} 
            <Link className='text-white' to='/'>Back</Link>
         </div>
     </div>
