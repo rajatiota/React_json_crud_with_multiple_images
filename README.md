@@ -14,6 +14,27 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
+### Create Server 
+create folder sever and install json-server
+add script  "start": "json-server -p 3005 -w db.json --no-cors",
+add a db.json file with dummy data
+{
+  "users": [
+    {
+      "name": "sa",
+      "email": "sa@sa.com",
+      "images": []
+   },
+   {
+      "name": "ra",
+      "email": "ra@ra.com",
+      "images": []
+   }
+        ]
+}
+
+### 'npm start'
+run server and check on http://localhost:3005/users
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.\
