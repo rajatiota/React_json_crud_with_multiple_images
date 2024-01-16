@@ -64,7 +64,9 @@ const Update = () => {
     const arrr = [...inputData.images];
 
     // Check if the combined size exceeds the maximum size
-    const totalSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
+    const totalSelectedFilesSize = selectedFiles.reduce((acc, file) => acc + file.size, 0);
+    const totalSeletedImagesSize = selectedImages.reduce((acc, file) => acc + file.size, 0);
+    const totalSize = totalSelectedFilesSize + totalSeletedImagesSize;
     const maxSizeBytes = maxSize * 1024 * 1024; // Convert maxSize to bytes
 
     if (totalSize > maxSizeBytes) {

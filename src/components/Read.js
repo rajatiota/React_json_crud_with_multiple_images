@@ -47,7 +47,7 @@ const Read = () => {
   return (
     <div className="d-flex w-100 vh-100 justify-content-center align-items-center">
       <div className="w-50 border bg-secondary text-white p-5">
-        <h2>User Data</h2>
+        <h2 style={{margin:'10px 0px'}}>User Data</h2>
         <p>Name: {Data.name}</p>
         <p>Email: {Data.email}</p>
         <div>
