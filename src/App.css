@@ -78,3 +78,27 @@ p{
 	position: absolute;
 	z-index: -1;
 }
+.pagination-container{
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5rem;
+  font-size: 1.2rem;
+  gap: 25px;
+}
+.pagination-container .page-num{
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: 400;
+  text-decoration: none;
+}
+.pagination-container .page-num:hover{
+  background-color: aquamarine;
+  color:white;
+}
+
+.pagination-container .active-page{
+  background-color: aquamarine;
+}

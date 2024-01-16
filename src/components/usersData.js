@@ -1,22 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { CSVLink } from "react-csv";
+import ReactPaginate from 'react-paginate';
 
 const UsersData = () => {
-
   // use state is used to set the incoming data to show the users
   const [data, setData] = useState([]);
   // navigate is used to navigate to desired location
   const navigate = useNavigate();
   var count = 0;
 
+  // use state for pagination
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  
+  const itemsPerPage = 4;
+  
+
   // useeffect is used to get the data from the json server
   useEffect(() => {
     axios
       .get("http://localhost:3005/users")
-      .then((res) => setData(res.data))
+      .then((res) => { 
+        setData(res.data)
+        setTotalPages(Math.ceil(res.data.length / itemsPerPage))})
       .catch((err) => console.log(err));
   }, []);
+
+
+const startIndex = currentPage * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
+const subset = data.slice(startIndex, endIndex);
+
+
+const handlePageChange = (selectedPage) => {
+  setCurrentPage(selectedPage.selected);
+};
+
 
   return (
     <div className="container">
@@ -24,6 +45,9 @@ const UsersData = () => {
       <Link to="/create" className="btn btn-success my-3">
         Add User
       </Link>
+      <button className='btn btn-info' style={{float:'right'}} >
+      <CSVLink data={data}><i className="fa-solid fa-download text-white"></i></CSVLink>
+      </button>
       <table className="table">
         <thead>
           <tr>
@@ -34,9 +58,9 @@ const UsersData = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((users, index) => (
+          {subset.map((users, index) => (
             <tr key={index}>
-              <th>{count+=1}</th>
+              <th>{(count += 1)}</th>
               <td>{users.name}</td>
               <td>{users.email}</td>
               <td>
@@ -68,8 +92,27 @@ const UsersData = () => {
           ))}
         </tbody>
       </table>
+      <div>
+    {subset.map((item) => (
+        <div key={item.id}>{item.title}</div>
+    ))}
+    <ReactPaginate
+        pageCount={totalPages}
+        onPageChange={handlePageChange}
+        forcePage={currentPage}
+        previousLabel={"<<"}
+        nextLabel={">>"}
+        breakLabel={"..."}
+        containerClassName={"pagination-container"}
+        activeLinkClassName={"active-page"}
+        pageLinkClassName="page-num"
+        previousLinkClassName="page-num"
+        nextLinkClassName="page-num"
+    />
+    </div>
     </div>
   );
+  
 
   // function for delete the user
   function handleDelete(id) {

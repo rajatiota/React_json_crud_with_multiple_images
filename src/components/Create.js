@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Create = () => {
-
   // initialize inputState with defalut structure to store in json server
   const [inputData, setInputData] = useState({
     name: "",
@@ -14,7 +13,7 @@ const Create = () => {
   var count = 0;
   var selectedFiles = [];
   var imgs = [];
-  
+
   const navigate = useNavigate();
   const [selectedImages, setSelectedImages] = useState([]);
   const [maxSize] = useState(25); // Maximum size in megabytes
@@ -44,7 +43,7 @@ const Create = () => {
     count = files.length;
     console.log(count);
 
-    // add the images into array 
+    // add the images into array
     for (let i = 0; i < count; i++) {
       selectedFiles.push(files[i]);
     }
@@ -67,7 +66,7 @@ const Create = () => {
       alert(`You can select a maximum of ${maxCount} images.`);
       // Clear the input value to prevent filenames from showing after an error
       e.target.value = "";
-         selectedFiles = [];
+      selectedFiles = [];
       return;
     }
 
@@ -88,7 +87,7 @@ const Create = () => {
     // Update state with the modified array
     setSelectedImages(updatedImages);
 
-    // call the function to convert the updated images to a string for upload 
+    // call the function to convert the updated images to a string for upload
     image_to_base(updatedImages);
     return false;
   };
@@ -102,12 +101,12 @@ const Create = () => {
       alert("Name and Email are required fields.");
       return;
     }
-    
-     // Check if email is valid
+
+    // Check if email is valid
     const isValidEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-    if(!inputData.email.match(isValidEmail)){
-      alert("Please enter a valid email"); 
+    if (!inputData.email.match(isValidEmail)) {
+      alert("Please enter a valid email");
       return;
     }
 
