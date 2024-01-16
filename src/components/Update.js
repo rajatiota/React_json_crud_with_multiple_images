@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const Update = () => {
@@ -246,6 +246,11 @@ const Update = () => {
           <button className="btn btn-primary" onClick={handleSubmit}>
             Update
           </button>
+        
+          <Link className="btn btn-info text-white" style={{float:'right'}} to="/">
+          Back
+        </Link>
+          
         </div>
       </div>
     </div>

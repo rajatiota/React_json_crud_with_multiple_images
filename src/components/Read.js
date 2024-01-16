@@ -79,7 +79,7 @@ const Read = () => {
             isOpen={isLightboxOpen}
           />
         )}
-        <Link className="text-white" to="/">
+        <Link className="btn btn-info text-white"  to="/">
           Back
         </Link>
       </div>
