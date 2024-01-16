@@ -41,13 +41,15 @@ const handlePageChange = (selectedPage) => {
 
   return (
     <div className="container">
-      <h1>List Of Users Data</h1>
+      <h1 style={{margin:'10px'}}>List Of Users Data</h1>
+      <div>
       <Link to="/create" className="btn btn-success my-3">
         Add User
       </Link>
-      <button className='btn btn-info' style={{float:'right'}} >
+      <button className='btn btn-info' style={{float:'right',margin:'16px 0px'}} >
       <CSVLink data={data}><i className="fa-solid fa-download text-white"></i></CSVLink>
       </button>
+      </div>
       <table className="table">
         <thead>
           <tr>
