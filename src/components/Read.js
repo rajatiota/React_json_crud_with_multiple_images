@@ -71,7 +71,7 @@ const Read = () => {
             </div>
           ))}
         </div>
-        {isLightboxOpen && (
+        {isLightboxOpen && (  
           <Lightbox
             images={url}
             startIndex={lightboxIndex}

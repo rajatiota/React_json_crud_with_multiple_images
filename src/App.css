@@ -46,6 +46,9 @@
 .table tbody th, td{
   border: 2px solid black;
 }
+td,tr,th{
+  cursor:all-scroll;
+ }
 p{
   border-bottom: 2px solid black;
 }
@@ -96,4 +99,13 @@ p{
 
 .pagination-container .active-page{
   background-color: aquamarine;
+}
+.set-count{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.set-count select{
+width: 40px;
+height: 25px;
 }

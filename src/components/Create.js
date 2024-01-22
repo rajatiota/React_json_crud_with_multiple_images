@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Create = () => {
+
+  const [dataLength, setDataLength] = useState();
+
   // initialize inputState with defalut structure to store in json server
-  const [inputData, setInputData] = useState({
+  const [inputData, setInputData] = useState({ 
     name: "",
     email: "",
+    orderno: "",
     images: [],
   });
-
+ 
   var count = 0;
   var selectedFiles = [];
   var imgs = [];
@@ -18,6 +22,16 @@ const Create = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [maxSize] = useState(2); // Maximum size in megabytes
   const [maxCount] = useState(5); // Maximum allowed count
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3005/users/")
+      .then((res) => setDataLength(res.data.length))
+      .catch((err) => console.log(err));
+  }, []);
+
+  console.log('dataLength-',dataLength);
+
 
   // fuction used to convert images into base 64 string format
   const image_to_base = (arr) => {
@@ -79,6 +93,7 @@ const Create = () => {
 
     // call the function to convert the selected images to a string
     image_to_base(finalArray);
+
   };
 
   // function to delete the images from the preview and also update the array
@@ -148,7 +163,7 @@ const Create = () => {
               required
               className="form-control"
               onChange={(e) =>
-                setInputData({ ...inputData, name: e.target.value })
+                setInputData({ ...inputData, name: e.target.value, orderno:dataLength +1 })
               }
             />
           </div>

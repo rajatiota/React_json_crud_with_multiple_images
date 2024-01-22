@@ -13,10 +13,8 @@ const UsersData = () => {
   const [currentPage, setCurrentPage] = useState(0);
   // use state for tital pages in pagination
   const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage, seitemsPerPage] = useState(4);
 
-  const itemsPerPage = 4;
-
-  var count = currentPage * itemsPerPage;
   // useeffect is used to get the data from the json server
   useEffect(() => {
     axios
@@ -26,30 +24,128 @@ const UsersData = () => {
         setTotalPages(Math.ceil(res.data.length / itemsPerPage));
       }) // set total pages
       .catch((err) => console.log(err));
-  }, []);
+  }, [itemsPerPage]);
 
+  //sort the data to display 
+  const sortedData = data.sort(function (a, b) {
+    return a.orderno - b.orderno;
+  });
   const startIndex = currentPage * itemsPerPage; // calculate start index
   const endIndex = startIndex + itemsPerPage; // calculate end index
-  const subset = data.slice(startIndex, endIndex); //  calculate data from start and end indexs
+  const subset = sortedData.slice(startIndex, endIndex); //  calculate data from start and end indexs
 
+  const [newData, setNewData] = useState([]); // Initialize with the current order
+  var count = currentPage * itemsPerPage;
   // handle pagechange for set the current page
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected);
   };
 
+  // handle item per page
+  function handleCount(e) {
+    if (e.target.value !== "") seitemsPerPage(e.target.value);
+  }
+
+  //function for download table data in csv format
   const downloadCSV = () => {
-    const csvContent = `Name,Email\n${data.map(user => `${user.name},${user.email}`).join('\n')}`;
-    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const csvContent = `Name,Email\n${data
+      .map((user) => `${user.name},${user.email}`)
+      .join("\n")}`;
+    const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
 
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'user_data.csv';
+    a.download = "user_data.csv";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
-};
+  };
+
+  // function delay is useed to delay the next opertation
+  function timeout(delay) {
+    return new Promise((res) => setTimeout(res, delay));
+  }
+
+  // function for drag and drop handling
+  var row;
+
+  function start(event) {
+    // console.log(event);
+    row = event.target;
+  }
+  function dragover(e) {
+    // console.log(e);
+    e.preventDefault();
+
+    let children = Array.from(e.target.parentNode.parentNode.children);
+    if (children.indexOf(e.target.parentNode) > children.indexOf(row))
+      e.target.parentNode.after(row);
+    else e.target.parentNode.before(row);
+  }
+
+  if (data.length !== 0) {
+    var rowCount = document.getElementById("tbody_id").rows.length;
+    // console.log("lenth of table", rowCount);
+  }
+
+  // handle the drop fuction in table 
+  const handleOnDrop = (event) => {
+    event.preventDefault();
+
+    const draggedRow = event.target.parentNode;
+    const draggedRowId = draggedRow.getAttribute("id");
+    const draggedRowIndex = draggedRow.rowIndex;
+
+    // Assuming that each cell in the row has attributes for 'id', 'name', 'email', 'orderno'
+    const draggedRowData = {
+      id: draggedRow.getAttribute("id"),
+      name: draggedRow.getAttribute("name"),
+      email: draggedRow.getAttribute("email"),
+      orderno: draggedRow.getAttribute("orderno"),
+    };
+
+    // Update the data in a way that suits your structure
+    const updatedData = data.map((user) => {
+      if (user.id === draggedRowData.id) {
+        return {
+          ...user,
+          orderno: draggedRowIndex,
+        };
+      }
+      const newOrderNo =
+        user.orderno < draggedRowIndex
+          ? user.orderno
+          : user.orderno < draggedRowIndex
+          ? user.orderno + 1
+          : user.orderno + 1;
+
+      return {
+        ...user,
+        orderno: newOrderNo,
+      };
+    });
+
+    setNewData(updatedData);
+  };
+
+  const hadleOrder = async () => {
+    try {
+      for (const row of newData) {
+        await axios.put(`http://localhost:3005/users/${row.id}`, {
+          ...row,
+          orderno: row.orderno,
+        });
+      }
+
+      alert("Order Updated Successfully!");
+      navigate("/");
+    } catch (error) {
+      console.error("Error updating order on the server:", error);
+      // Display an error message to the user
+    }
+  };
 
   return (
     <div className="container">
@@ -60,15 +156,17 @@ const UsersData = () => {
         </Link>
         <button
           className="btn btn-info"
-          style={{ float: "right", margin: "16px 0px" }} onClick={downloadCSV}
-        ><i className="fa-solid fa-download text-white"></i>
+          style={{ float: "right", margin: "16px 0px" }}
+          onClick={downloadCSV}
+        >
+          <i className="fa-solid fa-download text-white"></i>
         </button>
-         {/* csvlink is used to download the csv file which includes the the table data */}
-          {/* <CSVLink data={data}>
+        {/* csvlink is used to download the csv file which includes the the table data */}
+        {/* <CSVLink data={data}>
             <i className="fa-solid fa-download text-white"></i>
           </CSVLink> */}
       </div>
-      <table className="table">
+      <table className="table" id="mytable">
         <thead>
           <tr>
             <th>S.no</th>
@@ -77,10 +175,19 @@ const UsersData = () => {
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="tbody_id">
           {subset.map((users, index) => (
-            <tr key={index}>
-              <th>{(count += 1)}</th>
+            <tr
+              key={index}
+              id={users.id}
+              draggable="true"
+              onDragStart={start}
+              onDragOver={dragover}
+              onDrop={handleOnDrop}
+              attr={users.id}
+              order={users.orderno}
+            >
+              <th>{index + 1}</th>
               <td>{users.name}</td>
               <td>{users.email}</td>
               <td>
@@ -116,6 +223,19 @@ const UsersData = () => {
         {subset.map((item) => (
           <div key={item.id}>{item.title}</div>
         ))}
+        <div className="set-count">
+          <div className="d-flex row m-0">
+            <h6 style={{ marginRight: "5px" }}>Item Per Page</h6>
+            <select id="count" name="count" onChange={handleCount}>
+              <option value="4">4</option>
+              <option value="8">8</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+          <button style={{ float: "right" }} onClick={hadleOrder}>
+            Save order
+          </button>
+        </div>
         <ReactPaginate
           pageCount={totalPages}
           onPageChange={handlePageChange}
