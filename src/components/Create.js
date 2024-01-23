@@ -23,6 +23,7 @@ const Create = () => {
   const [maxSize] = useState(2); // Maximum size in megabytes
   const [maxCount] = useState(5); // Maximum allowed count
 
+  // useEffect is used to get the data and get the lenght of data
   useEffect(() => {
     axios
       .get("http://localhost:3005/users/")

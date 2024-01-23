@@ -60,23 +60,26 @@ const UsersData = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+
     window.URL.revokeObjectURL(url);
   };
 
   // function delay is useed to delay the next opertation
-  function timeout(delay) {
-    return new Promise((res) => setTimeout(res, delay));
-  }
+  // function timeout(delay) {
+  //   return new Promise((res) => setTimeout(res, delay));
+  // }
 
   // function for drag and drop handling
   var row;
-
-  function start(event) {
+  var dragStartIndex;
+  function start(event,index) {
     // console.log(event);
     row = event.target;
+    dragStartIndex = index + 1; 
+    console.log('dragStartIndex',dragStartIndex)   
   }
+
   function dragover(e) {
-    // console.log(e);
     e.preventDefault();
 
     let children = Array.from(e.target.parentNode.parentNode.children);
@@ -85,19 +88,13 @@ const UsersData = () => {
     else e.target.parentNode.before(row);
   }
 
-  if (data.length !== 0) {
-    var rowCount = document.getElementById("tbody_id").rows.length;
-    // console.log("lenth of table", rowCount);
-  }
-
   // handle the drop fuction in table 
   const handleOnDrop = (event) => {
     event.preventDefault();
-
     const draggedRow = event.target.parentNode;
-    const draggedRowId = draggedRow.getAttribute("id");
+    // const draggedRowId = draggedRow.getAttribute("id");
     const draggedRowIndex = draggedRow.rowIndex;
-
+   console.log('dragEndIndex',draggedRowIndex)
     // Assuming that each cell in the row has attributes for 'id', 'name', 'email', 'orderno'
     const draggedRowData = {
       id: draggedRow.getAttribute("id"),
@@ -114,12 +111,18 @@ const UsersData = () => {
           orderno: draggedRowIndex,
         };
       }
-      const newOrderNo =
-        user.orderno < draggedRowIndex
-          ? user.orderno
-          : user.orderno < draggedRowIndex
-          ? user.orderno + 1
-          : user.orderno + 1;
+      var newOrderNo;
+      if(draggedRowIndex < dragStartIndex) {
+        newOrderNo  =  user.orderno < draggedRowIndex ? user.orderno
+        :  user.orderno >= dragStartIndex ? user.orderno
+        :  user.orderno + 1;
+      }
+      else if(draggedRowIndex > dragStartIndex){
+        newOrderNo  =  user.orderno < dragStartIndex ? user.orderno
+        :  user.orderno > dragStartIndex && user.orderno <= draggedRowIndex  ? user.orderno - 1
+        :  user.orderno;
+      }
+        
 
       return {
         ...user,
@@ -181,13 +184,13 @@ const UsersData = () => {
               key={index}
               id={users.id}
               draggable="true"
-              onDragStart={start}
+              onDragStart={(e) => start(e,index)}
               onDragOver={dragover}
               onDrop={handleOnDrop}
               attr={users.id}
               order={users.orderno}
             >
-              <th>{index + 1}</th>
+              <th>{count += 1}</th>
               <td>{users.name}</td>
               <td>{users.email}</td>
               <td>
